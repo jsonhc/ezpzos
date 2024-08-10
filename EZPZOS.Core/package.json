@@ -13,9 +13,9 @@
 	},
 	"scripts": {
 		"test": "jest",
-		"rename:WebIndex":"node -e \"require('fs').rename('lib/web.index.js', 'lib/index.js', function(err) { if (err) console.log(err); console.log('web.index.js successfully renamed!') })\"",
+		"rename:WebIndex": "node -e \"require('fs').rename('lib/web.index.js', 'lib/index.js', function(err) { if (err) console.log(err); console.log('web.index.js successfully renamed!') })\"",
 		"rename:WebType": "node -e \"require('fs').rename('lib/web.index.d.ts', 'lib/index.d.ts', function(err) { if (err) console.log(err); console.log('web.index.d.ts successfully renamed!') })\"",
-		"rename:ExpressIndex":"node -e \"require('fs').rename('lib/express.index.js', 'lib/index.js', function(err) { if (err) console.log(err); console.log('express.index.js successfully renamed!') })\"",
+		"rename:ExpressIndex": "node -e \"require('fs').rename('lib/express.index.js', 'lib/index.js', function(err) { if (err) console.log(err); console.log('express.index.js successfully renamed!') })\"",
 		"rename:ExpressType": "node -e \"require('fs').rename('lib/express.index.d.ts', 'lib/index.d.ts', function(err) { if (err) console.log(err); console.log('express.index.d.ts successfully renamed!') })\"",
 		"build:Web": "rimraf lib & tsc & babel src --out-dir lib --extensions \".ts,.tsx\" --copy-files --no-copy-ignored & rimraf lib/Repository lib/express.index.d.ts lib/express.index.js & npm run rename:WebType & npm run rename:WebIndex",
 		"build:Express": "rimraf lib & tsc & babel src --out-dir lib --extensions \".ts,.tsx\" --copy-files --no-copy-ignored & rimraf lib/Repository lib/web.index.d.ts lib/web.index.js & npm run rename:ExpressType & npm run rename:ExpressIndex",
@@ -31,8 +31,10 @@
 	"dependencies": {
 		"@types/mssql": "^9.1.5",
 		"@types/node": "^20.14.10",
+		"bcryptjs": "^2.4.3",
 		"dotenv": "^16.4.5",
 		"dotenv-safe": "^9.1.0",
+		"jsonwebtoken": "^9.0.2",
 		"mssql": "^11.0.1",
 		"rimraf": "^6.0.1",
 		"ts-node": "^10.9.2",

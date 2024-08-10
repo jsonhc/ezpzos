@@ -4,7 +4,7 @@ import { IUser } from "../Interface/IUser";
 import { IDataObject } from "../Interface/IDataObject";
 import { BaseRepository } from "./BaseRepository";
 import { IRepository } from "./IRepository";
-import { UniqueIdentifier } from "mssql";
+import { NVarChar, UniqueIdentifier } from "mssql";
 import { UserRoleRepository } from "./UserRoleRepository";
 import { PreparedStatementHandler } from "../Handler/PrepareStatementHandler";
 import { UserRole } from "../Domain/UserRole";
@@ -222,6 +222,43 @@ export class UserRepository extends BaseRepository implements IRepository {
 		);
 	}
 
+	/**
+	 * Get a single user record by Mobile number [Mobile]
+	 * @param mobile Mobile of the user to be queried
+	 * @param callback Result returned from the query. Parameter {result} indicating if the call succeed or otherwise. Parameter {user} represents the User object or undefined if result is false.
+	 * @returns void
+	 */
+	public async GetUserByMobile(mobile: string, callback: (result: boolean, user: User | null | undefined) => void) {
+		this.Logger.Log("GetUserByMobile", "Getting User By Mobile", LogLevel.DEBUG);
+
+		let query = `SELECT * FROM [dbo].[User] WHERE [Mobile] = @Mobile`;
+
+		await this.Execute(
+			query,
+			{ Mobile: mobile },
+			preparedStatement => {
+				return preparedStatement.input("Mobile", NVarChar);
+			},
+			async (err, result) => {
+				if (err) {
+					this.Logger.Log(
+						"GetUserByMobile",
+						`Error Getting User By Mobile: ${mobile}
+							Exception: ${JSON.stringify(err)}`,
+						LogLevel.ERROR
+					);
+				} else if (result?.rowsAffected[0] === 1 && result.recordsets[0].length > 0) {
+					this.Logger.Log("GetUserByMobile", "User found.", LogLevel.DEBUG);
+					let user = result.recordsets[0][0] as User;
+					callback(true, user);
+				} else {
+					this.Logger.Log("GetUserByMobile", "User not found.", LogLevel.WARN);
+					callback(false, null);
+				}
+			}
+		);
+	}
+
 	public override async OnSaving(
 		dataObject: IDataObject,
 		userId: string,
@@ -237,7 +274,7 @@ export class UserRepository extends BaseRepository implements IRepository {
 				return;
 			}
 
-			if (user.UserRoles.length == 0) {
+			if (!user.UserRoles || user.UserRoles.length == 0) {
 				this.Logger.Log("OnSaving", `User has no userRoles.`, LogLevel.ERROR);
 				callback(false);
 				return;
@@ -270,30 +307,37 @@ export class UserRepository extends BaseRepository implements IRepository {
 		isDelete: boolean,
 		callback: (result: boolean) => void
 	): Promise<void> {
-		super.OnSaved(dataObject, userId, isUpdate, isDelete, result => {
+		super.OnSaved(dataObject, userId, isUpdate, isDelete, async result => {
 			this.Logger.Log("OnSaved", `Parent OnSaved Result: ${result}`, LogLevel.INFO);
-
 			if (!result) {
 				callback(false);
 				return;
 			}
-
-			// Saving UserRole
 			let userRoleRepository = new UserRoleRepository();
-			let finallResult = false;
-			for (let userRole of (dataObject as User).UserRoles) {
-				userRoleRepository.Save(userRole as UserRole, userId, isUpdate, isDelete, result => {
-					this.Logger.Log("Save", `Save userRole Result: ${result}`, LogLevel.INFO);
-					if (!result) {
-						finallResult = false;
-					}
+			let finalResult = true;
+
+			//save the userRole into database
+			const saveUserRolePromises = (dataObject as User).UserRoles.map(userRole => {
+				return new Promise<boolean>((resolve, reject) => {
+					userRoleRepository.Save(userRole as UserRole, userId, isUpdate, isDelete, result => {
+						this.Logger.Log("Save", `Save userRole Result: ${result}.`, LogLevel.INFO);
+						if (!result) {
+							finalResult = false;
+							reject(new Error("Failed to save userRole"));
+							this.Logger.Log("Save", "Failed to save userRole", LogLevel.INFO)
+						} else {
+							resolve(result);
+						}
+					});
 				});
-			}
-			if (!finallResult) {
+			});
+			await Promise.all(saveUserRolePromises);
+			this.Logger.Log("Save", "All userRoles are saved", LogLevel.INFO)
+
+			if (!finalResult) {
 				callback(false);
 				return;
 			}
-
 			callback(true);
 			return;
 		});

@@ -7,10 +7,63 @@ import { RoleRepository } from "./RoleRepository";
 import { Role } from "../Domain/Role";
 import { IDataObject } from "../Interface/IDataObject";
 import { UserRole } from "../Domain/UserRole";
+import { PreparedStatementHandler } from "../Handler/PrepareStatementHandler";
 
 export class UserRoleRepository extends BaseRepository implements IRepository {
 	//#region Implementation
-	//TODO Update, Insert, Delete
+	//TODO Update, Delete
+	override async Insert(dataObject: IDataObject, callback: (result: boolean) => void): Promise<void> {
+		this.Logger.Log("Insert", "Inserting", LogLevel.DEBUG);
+
+		// Validate input dataobject
+		if (dataObject instanceof UserRole) {
+			let userRole = dataObject as UserRole;
+			// Preparing insert query
+			let query = `Insert into [dbo].[UserRole] ([Id],[UserId],[RoleId],[IsDeleted],[CreatedTimestamp],[CreatedUserId],[UpdatedTimestamp],[UpdatedUserId])
+						Values(@Id,@UserId,@RoleId,@IsDeleted,@CreatedTimestamp,@CreatedUserId,@UpdatedTimestamp,@UpdatedUserId)`;
+
+			// Execute Query with parameters
+			this.Execute(
+				query,
+				userRole,
+				preparedStatement => {
+					// get role related parameters
+					return PreparedStatementHandler.UserRolePrepareStatmentInput(preparedStatement);
+				},
+				(err, result) => {
+					if (err) {
+						this.Logger.Log(
+							"Insert",
+							`Error Inserting UserRole Object: ${JSON.stringify(dataObject)}
+							Exception: ${JSON.stringify(err)}`,
+							LogLevel.ERROR
+						);
+						callback(false);
+						return;
+					} else {
+						// If one row affect, meaning inserted one row
+						if (result?.rowsAffected[0] == 1) {
+							this.Logger.Log("Insert", `UserRole Inserted.`, LogLevel.DEBUG);
+							callback(true);
+							return;
+						} else {
+							this.Logger.Log(
+								"Insert",
+								`Error Inserting UserRole Object: ${JSON.stringify(dataObject)}
+								Result: ${JSON.stringify(result)}`,
+								LogLevel.ERROR
+							);
+							callback(false);
+							return;
+						}
+					}
+				}
+			);
+		} else {
+			this.Logger.Log("Insert", `Invalid UserRole Object: ${JSON.stringify(dataObject)}`, LogLevel.ERROR);
+			callback(false)
+		}
+	}
 
 	public async GetUserRolesByUserId(
 		id: string,

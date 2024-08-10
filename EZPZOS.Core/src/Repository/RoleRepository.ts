@@ -2,16 +2,16 @@ import { NVarChar, UniqueIdentifier } from "mssql";
 import { LogLevel } from "../Common/Constants";
 import { BaseRepository } from "./BaseRepository";
 import { IRepository } from "./IRepository";
-import { IRole } from "../Interface/IRole";
+import { Role } from "../Domain/Role";
 
 export class RoleRepository extends BaseRepository implements IRepository {
 	//#region Implementation
 	//TODO Update, Insert, Delete
 
-	public async GetRoleByRoleId(id: string, callback: (result: boolean, role: IRole | null | undefined) => void) {
+	public async GetRoleByRoleId(id: string, callback: (result: boolean, role: Role | null | undefined) => void) {
 		this.Logger.Log("GetRoleByRoleId", "Getting Role By RoleId", LogLevel.DEBUG);
 
-		// Validate input dataobject
+		// Validate input dataObject
 
 		// Preparing insert query
 		let query = `Select * from [dbo].[Role] Where [RoleId] = @Id`;
@@ -35,7 +35,7 @@ export class RoleRepository extends BaseRepository implements IRepository {
 					// If one row affect, role gotten
 					if (result?.rowsAffected[0] === 1 && result.recordsets[0].length > 0) {
 						this.Logger.Log("GetRoleByRoleId", `Role Found.`, LogLevel.DEBUG);
-						callback(true, result.recordsets[0][0] as IRole);
+						callback(true, result.recordsets[0][0] as Role);
 					} else {
 						this.Logger.Log(
 							"GetRoleByRoleId",
@@ -50,7 +50,7 @@ export class RoleRepository extends BaseRepository implements IRepository {
 		);
 	}
 
-	public async GetRoleByRoleIdPromise(id: string): Promise<IRole | null | undefined> {
+	public async GetRoleByRoleIdPromise(id: string): Promise<Role | null | undefined> {
 		this.Logger.Log("GetRoleByRoleId", "Getting Role By RoleId", LogLevel.DEBUG);
 
 		// Validate input dataobject
@@ -65,7 +65,7 @@ export class RoleRepository extends BaseRepository implements IRepository {
 		// If one row affect, role gotten
 		if (result?.rowsAffected[0] === 1 && result.recordsets[0].length > 0) {
 			this.Logger.Log("GetRoleByRoleId", `Role Found.`, LogLevel.DEBUG);
-			return result.recordsets[0][0] as IRole;
+			return result.recordsets[0][0] as Role;
 		} else {
 			this.Logger.Log(
 				"GetRoleByRoleId",
@@ -78,7 +78,7 @@ export class RoleRepository extends BaseRepository implements IRepository {
 		return undefined;
 	}
 
-	public async GetRoleByCode(code: string, callback: (result: boolean, role: IRole | null | undefined) => void) {
+	public async GetRoleByCode(code: string, callback: (result: boolean, role: Role | null | undefined) => void) {
 		this.Logger.Log("GetRoleByRoleCode", "Getting Role By RoleCode", LogLevel.DEBUG);
 
 		// Validate input dataobject
@@ -105,7 +105,7 @@ export class RoleRepository extends BaseRepository implements IRepository {
 					// If one row affect, role gotten
 					if (result?.rowsAffected[0] === 1 && result.recordsets[0].length > 0) {
 						this.Logger.Log("GetRoleByRoleCode", `Role Found.`, LogLevel.DEBUG);
-						callback(true, result.recordsets[0][0] as IRole);
+						callback(true, result.recordsets[0][0] as Role);
 					} else {
 						this.Logger.Log(
 							"GetRoleByRoleCode",
@@ -120,7 +120,7 @@ export class RoleRepository extends BaseRepository implements IRepository {
 		);
 	}
 
-	public async GetRoleByCodePromise(code: string): Promise<IRole | null | undefined> {
+	public async GetRoleByCodePromise(code: string): Promise<Role | null | undefined> {
 		this.Logger.Log("GetRoleByRoleCode", "Getting Role By RoleCode", LogLevel.DEBUG);
 
 		// Validate input dataobject
@@ -136,7 +136,7 @@ export class RoleRepository extends BaseRepository implements IRepository {
 			// If one row affect, role gotten
 			if (result?.rowsAffected[0] === 1 && result.recordsets[0].length > 0) {
 				this.Logger.Log("GetRoleByRoleCode", `Role Found.`, LogLevel.DEBUG);
-				return result.recordsets[0][0] as IRole;
+				return result.recordsets[0][0] as Role;
 			} else {
 				this.Logger.Log(
 					"GetRoleByRoleCode",

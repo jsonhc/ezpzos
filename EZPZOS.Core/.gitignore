@@ -125,3 +125,6 @@ dist
 .pnp.*
 package-lock.json
 /lib
+
+# Ignore Mac system files
+.DS_Store
