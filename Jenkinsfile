@@ -1,3 +1,4 @@
+
 pipeline {
     agent any
 
@@ -17,7 +18,7 @@ pipeline {
                 dir('EZPZOS.Core') { 
                     sh 'npm install'
                     sh 'npm run build'
-                    echo "Build core success"
+                    echo "Build EZPZOS.Core success"
                 }
             }
         }
@@ -25,31 +26,32 @@ pipeline {
         stage('Build EZPZOS.Web') {
             steps {
                 dir('EZPZOS.Web') { 
+                    sh "npm install Buffer"
                     sh 'npm install'
-                    sh 'npm install Buffer'
                     sh 'npm run build'
-                    echo "Build web success"
+                     echo "Build EZPZOS.Web success"
                 }
             }
         }
 
-        // Uncomment if needed
-        // stage('Checkout EZPZOS.Web') {
-        //     steps {
-        //         dir('EZPZOS.Web') {
-        //             git credentialsId: 'Github-ssh-key', branch: 'main', url: 'git@github.com:yeye-git/ezpzos.git'
-        //         }
-        //     }
-        // }
+        stage('Frontend Unit Tests') {
+             steps {
+                 dir('EZPZOS.Web') { 
+                 sh 'npm run test'  // 执行单元测试
+        }
 
-        // Uncomment if needed
-        // stage('Checkout EZPZOS.Express') {
-        //     steps {
-        //         dir('EZPZOS.Express') {
-        //             git credentialsId: 'Github-ssh-key', branch: 'main', url: 'git@github.com:yeye-git/EZPZOS.Express.git'
-        //         }
-        //     }
-        // }
+        
+
+
+
+
+
+
+
+    }
+}
+
+
 
         // Uncomment if needed
         // stage('Build EZPZOS.Express') {
@@ -62,3 +64,5 @@ pipeline {
         // }
     }
 }
+
+
