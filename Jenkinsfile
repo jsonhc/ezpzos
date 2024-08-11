@@ -17,6 +17,7 @@ pipeline {
                 dir('EZPZOS.Core') { 
                     sh 'npm install'
                     sh 'npm run build'
+                    echo "Build core success"
                 }
             }
         }
@@ -25,7 +26,9 @@ pipeline {
             steps {
                 dir('EZPZOS.Web') { 
                     sh 'npm install'
+                    sh 'npm install Buffer'
                     sh 'npm run build'
+                    echo "Build web success"
                 }
             }
         }
