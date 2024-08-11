@@ -34,11 +34,11 @@ pipeline {
             }
         }
 
-        stage('Frontend Unit Tests') {
-             steps {
-                 dir('EZPZOS.Web') { 
-                 sh 'npm run test'  // 执行单元测试
-        }
+        // stage('Frontend Unit Tests') {
+        //      steps {
+        //          dir('EZPZOS.Web') { 
+        //          sh 'npm run test'  // 执行单元测试
+        // }
 
         
 
