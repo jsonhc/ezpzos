@@ -1,66 +1,61 @@
-
 pipeline {
     agent any
 
+    tools {
+        nodejs "NodeJS22.6"
+    }
+
     stages {
-        stage('git checkout') {
-            agent {
-                node {
-                    label 'slave'
-                }
-            }
+        stage('Checkout EZPZOS.Core') {
             steps {
-               
-                dir('EZPZOS.Core') {  // 将代码检出到指定目录
-                    git branch: 'main', url: 'https://github.com/EZPZ-OS/EZPZOS.Core.git'
-                
+                git credentialsId: 'Github-ssh-key', branch: 'main', url: 'git@github.com:yeye-git/ezpzos.git'
             }
         }
 
-         stage('git checkout') {
-            agent {
-                node {
-                    label 'slave'
-                }
-            }
+        stage('Build EZPZOS.Core') {
             steps {
-               
-                dir('EZPZOS.Web') {  // 将代码检出到指定目录
-                    git branch: 'main', url: 'https://github.com/EZPZ-OS/EZPZOS.Web.git'
-                
+                dir('EZPZOS.Core') { 
+                    sh 'npm install'
+                    sh 'npm run build'
+                }
             }
         }
 
-        //  stage('git checkout') {
-        //     agent {
-        //         node {
-        //             label 'slave'
-        //         }
-        //     }
+        stage('Build EZPZOS.Web') {
+            steps {
+                dir('EZPZOS.Web') { 
+                    sh 'npm install'
+                    sh 'npm run build'
+                }
+            }
+        }
+
+        // Uncomment if needed
+        // stage('Checkout EZPZOS.Web') {
         //     steps {
-               
-        //         dir('EZPZOS.Express') {  // 将代码检出到指定目录
-        //             git branch: 'main', url: 'https://github.com/EZPZ-OS/EZPZOS.Express.git'
-                
+        //         dir('EZPZOS.Web') {
+        //             git credentialsId: 'Github-ssh-key', branch: 'main', url: 'git@github.com:yeye-git/ezpzos.git'
+        //         }
         //     }
         // }
 
-        // stage('build') {
-        //     agent {
-        //         node {
-        //             label 'slave'
-        //         }
-        //     }
+        // Uncomment if needed
+        // stage('Checkout EZPZOS.Express') {
         //     steps {
-        //         // 
-        //         dir() { 
-        //             sh "npm run build"
-        //         }
-        //         dir("https://github.com/EZPZ-OS/EZPZOS.Web.git") { 
-        //             sh "npm run build"
-        //             stash includes: 'dist/', name: 'dist'
+        //         dir('EZPZOS.Express') {
+        //             git credentialsId: 'Github-ssh-key', branch: 'main', url: 'git@github.com:yeye-git/EZPZOS.Express.git'
         //         }
         //     }
-        
         // }
 
+        // Uncomment if needed
+        // stage('Build EZPZOS.Express') {
+        //     steps {
+        //         dir('EZPZOS.Express') { 
+        //             sh 'npm install'
+        //             sh 'npm run build'
+        //         }
+        //     }
+        // }
+    }
+}
