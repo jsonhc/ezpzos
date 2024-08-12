@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         AWS_ACCOUNT_ID = '897244716306'
-        AWS_REGION = 'ap-southeast-2' // 修正这里的区域名称
+        AWS_REGION = 'ap-southeast-2'
         ECR_REPO_NAME = 'ezpzos'
         IMAGE_TAG = '1.0'
     }
@@ -14,12 +14,18 @@ pipeline {
 
     stages {
         stage('Checkout EZPZOS.Core') {
+            agent {
+                label 'slave' // 指定运行此 stage 的 agent 标签
+            }
             steps {
                 git credentialsId: 'Github-ssh-key', branch: 'main', url: 'git@github.com:yeye-git/ezpzos.git'
             }
         }
 
         stage('Build EZPZOS.Core') {
+            agent {
+                label 'slave' // 指定运行此 stage 的 agent 标签
+            }
             steps {
                 dir('EZPZOS.Core') { 
                     sh 'npm install'
@@ -30,6 +36,9 @@ pipeline {
         }
 
         stage('Build EZPZOS.Web') {
+            agent {
+                label 'slave' // 指定运行此 stage 的 agent 标签
+            }
             steps {
                 dir('EZPZOS.Web') { 
                     sh 'npm install'
@@ -42,6 +51,9 @@ pipeline {
         }
 
         stage('Build Docker Image') {
+            agent {
+                label 'slave' // 指定运行此 stage 的 agent 标签
+            }
             steps {
                 echo 'Building Docker Image...'
                 script {
@@ -51,7 +63,10 @@ pipeline {
             }
         }
 
-       stage('Login to ECR') {
+        stage('Login to ECR') {
+            agent {
+                label 'slave' // 指定运行此 stage 的 agent 标签
+            }
             steps {
                 script {
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS']]) {
@@ -62,6 +77,9 @@ pipeline {
         }
 
         stage('Tag Docker Image') {
+            agent {
+                label 'slave' // 指定运行此 stage 的 agent 标签
+            }
             steps {
                 script {
                     sh 'docker tag ${ECR_REPO_NAME}:${IMAGE_TAG} ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:${IMAGE_TAG}'
@@ -70,6 +88,9 @@ pipeline {
         }
 
         stage('Push Docker Image to ECR') {
+            agent {
+                label 'slave' // 指定运行此 stage 的 agent 标签
+            }
             steps {
                 script {
                     sh 'docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:${IMAGE_TAG}'
