@@ -29,7 +29,7 @@ pipeline {
                     sh 'npm install Buffer'
                     sh 'npm run build'
                     echo "Build web success"
-                    sh 'ls -la build/'
+                    sh 'ls -la dist/'
                 }
             }
         }
