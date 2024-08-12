@@ -5,7 +5,7 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Copy the package.json and package-lock.json files
-COPY . ./
+COPY . /app
 RUN ls-l /app
 
 # Install dependencies
