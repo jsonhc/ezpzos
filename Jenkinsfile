@@ -59,6 +59,7 @@ pipeline {
                 script {
                     sh 'docker --version'
                     sh "docker build -t ${ECR_REPO_NAME}:${IMAGE_TAG} ."
+                    echo "Build docker success"
                    
                 }
             }
