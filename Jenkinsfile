@@ -58,7 +58,8 @@ pipeline {
                 echo 'Building Docker Image...'
                 script {
                     sh 'docker --version'
-                    dockerImage = docker.build("${ECR_REPO_NAME}:${IMAGE_TAG}")
+                    sh "docker build -t ${ECR_REPO_NAME}:${IMAGE_TAG} ."
+                   
                 }
             }
         }
