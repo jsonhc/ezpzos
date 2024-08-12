@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Copy the package.json and package-lock.json files
 COPY . /app
-RUN ls-l /app
+RUN ls -l /app
 
 # Install dependencies
 RUN npm install
