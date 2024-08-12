@@ -1,6 +1,8 @@
 pipeline {
     agent any
-
+    triggers {
+        githubPush() // 监听 GitHub Push 事件
+    }
     environment {
         AWS_ACCOUNT_ID = '897244716306'
         AWS_REGION = 'ap-southeast-2'
