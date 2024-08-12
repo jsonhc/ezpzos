@@ -1,6 +1,13 @@
 pipeline {
     agent any
 
+    environment {
+        AWS_ACCOUNT_ID = '897244716306'
+        AWS_REGION = 'ap-southeast-2' // 修正这里的区域名称
+        ECR_REPO_NAME = 'ezpzos'
+        IMAGE_TAG = '1.0'
+    }
+
     tools {
         nodejs "NodeJS22.6"
     }
@@ -33,5 +40,41 @@ pipeline {
                 }
             }
         }
+
+        stage('Build Docker Image') {
+            steps {
+                echo 'Building Docker Image...'
+                script {
+                    dockerImage = docker.build("${ECR_REPO_NAME}:${IMAGE_TAG}")
+                }
+            }
+        }
+
+       stage('Login to ECR') {
+            steps {
+                script {
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS']]) {
+                        sh 'aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com'
+                    }
+                }
+            }
+        }
+
+        stage('Tag Docker Image') {
+            steps {
+                script {
+                    sh 'docker tag ${ECR_REPO_NAME}:${IMAGE_TAG} ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:${IMAGE_TAG}'
+                }
+            }
+        }
+
+        stage('Push Docker Image to ECR') {
+            steps {
+                script {
+                    sh 'docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:${IMAGE_TAG}'
+                }
+            }
+        }
+
     } // 关闭 stages 块
 } // 关闭 pipeline 块
