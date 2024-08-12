@@ -97,6 +97,7 @@ pipeline {
             }
             steps {
                 script {
+                     echo "push success"
                     sh 'docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:${IMAGE_TAG}'
                 }
             }
