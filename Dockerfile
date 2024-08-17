@@ -8,7 +8,7 @@ WORKDIR /app
 
 COPY EZPZOS.Web/* /app/
 
-RUN ls -l /app
+RUN ls -l /app/src
 
 # Install dependencies
 RUN npm install
