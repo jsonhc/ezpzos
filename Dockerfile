@@ -5,13 +5,17 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Copy the package.json and package-lock.json files
+
 COPY EZPZOS.Web/* /app/
+
 RUN ls -l /app
 
 # Install dependencies
 RUN npm install
+RUN npm install Buffer
+RUN npm run build
 
-# # 复制构建的静态文件到容器内
+# # copy static file into container
 # COPY EZPZOS.Web/dist/ /app/dist/
 
 # Expose the application port
@@ -19,3 +23,4 @@ EXPOSE 3000
 
 # Command to run the application
 CMD ["npm", "start"]
+
