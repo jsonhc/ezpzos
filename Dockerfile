@@ -16,7 +16,7 @@ RUN npm install Buffer
 RUN npm run build
 
 # # copy static file into container
-# COPY EZPZOS.Web/dist/ /app/dist/
+COPY EZPZOS.Web/dist/ /app/dist/
 
 # Expose the application port
 EXPOSE 3000
