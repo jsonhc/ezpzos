@@ -6,8 +6,8 @@ WORKDIR /app
 
 # Copy the package.json and package-lock.json files
 
-COPY EZPZOS.Web /app/
-COPY EZPZOS.Core /app/
+COPY ./EZPZOS.Web /app/
+COPY ./EZPZOS.Core /app/
 
 RUN ls -l /app
 
