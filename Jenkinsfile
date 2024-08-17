@@ -42,11 +42,11 @@ pipeline {
                 label 'slave' // 指定运行此 stage 的 agent 标签
             }
             steps {
-                dir('EZPZOS.Express') { 
+                dir('EZPZOS.Web') { 
                     sh 'npm install'
-                    // sh 'npm install Buffer'
+                    sh 'npm install Buffer'
                     sh 'npm run build'
-                    echo "Build Express success"
+                    echo "Build Web success"
                     sh 'ls -la dist/'
                 }
             }
