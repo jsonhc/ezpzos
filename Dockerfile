@@ -19,6 +19,7 @@ RUN ls -l /app
 RUN cd /app/EZPZOS.Core && npm install && npm run build
 RUN cd /app/EZPZOS.Web && npm install && npm install Buffer && npm run build
 RUN ls -l /app/EZPZOS.Web
+RUN cp -a /app/EZPZOS.Web/* /app/
 # # copy static file into container
 #COPY EZPZOS.Web/dist/ /app/dist/
 
@@ -27,4 +28,4 @@ EXPOSE 3000
 
 # Command to run the application
 
-CMD cd /app/EZPZOS.Web/ && npm start
+CMD ["npm", "start"]
