@@ -25,4 +25,5 @@ RUN cd /app/EZPZOS.Web && npm install && npm install Buffer && npm run build
 EXPOSE 3000
 
 # Command to run the application
-CMD ["npm", "start"]
+
+CMD ["cd /app/EZPZOS.Web/", "npm", "start"]
