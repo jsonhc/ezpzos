@@ -9,6 +9,7 @@ WORKDIR /app
 COPY ./EZPZOS.Web /app/
 COPY ./EZPZOS.Core /app/
 
+RUN ls -l /app/EZPZOS.Core
 RUN ls -l /app
 
 # Install dependencies
@@ -18,7 +19,7 @@ RUN ls -l /app
 RUN cd /app/EZPZOS.Core && npm install && npm run build
 RUN cd /app/EZPZOS.Web && npm install && npm install Buffer && npm run build
 # # copy static file into container
-COPY EZPZOS.Web/dist/ /app/dist/
+#COPY EZPZOS.Web/dist/ /app/dist/
 
 # Expose the application port
 EXPOSE 3000
