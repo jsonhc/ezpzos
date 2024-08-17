@@ -6,15 +6,17 @@ WORKDIR /app
 
 # Copy the package.json and package-lock.json files
 
-COPY EZPZOS.Web/ /app/
+COPY EZPZOS.Web /app/
+COPY EZPZOS.Core /app/
 
-RUN ls -l /app/src
+RUN ls -l /app
 
 # Install dependencies
-RUN npm install
-RUN npm install Buffer
-RUN npm run build
-
+# RUN npm install
+# RUN npm install Buffer
+# RUN npm run build
+RUN cd /app/EZPZOS.Core && npm install && npm run build
+RUN cd /app/EZPZOS.Web && npm install && npm install Buffer && npm run build
 # # copy static file into container
 COPY EZPZOS.Web/dist/ /app/dist/
 
@@ -23,4 +25,3 @@ EXPOSE 3000
 
 # Command to run the application
 CMD ["npm", "start"]
-
